@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOW Acknowledgment – Federated Service Solutions</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #1a7a4a;
+      --green-light: #e8f5ee;
+      --green-dark: #145c37;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --white: #ffffff;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f4f6f3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 48px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--text);
+      margin-bottom: 32px;
+      letter-spacing: -0.3px;
+    }
+
+    .logo span { color: var(--green); }
+
+    .icon-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+
+    .icon-wrap svg { width: 36px; height: 36px; }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      color: var(--text);
+      margin-bottom: 12px;
+      letter-spacing: -0.4px;
+    }
+
+    p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .status {
+      display: none;
+      margin-top: 24px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .status.success {
+      display: block;
+      background: var(--green-light);
+      color: var(--green-dark);
+      border: 1px solid #a7d5ba;
+    }
+
+    .status.error {
+      display: block;
+      background: #fef2f2;
+      color: #b91c1c;
+      border: 1px solid #fca5a5;
+    }
+
+    .spinner {
+      display: none;
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 24px auto 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 28px 0;
+    }
+
+    .footer {
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Federated <span>Service Solutions</span></div>
+
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+
+    <h1>SOW Accepted</h1>
+    <p>Processing your acknowledgment…</p>
+    <p>Please do not close this page.</p>
+
+    <div class="spinner" id="spinner"></div>
+    <div class="status" id="status"></div>
+
+    <div class="divider"></div>
+    <p class="footer">Federated Service Solutions &bull; partners@federatedservice.com</p>
+  </div>
+
+  <script>
+    const ACCEPT_WEBHOOK = 'https://www.pipelines.quickbase.com/hooks/webhooks/1e1huofxgcg';
+
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name) || '';
+    }
+
+    async function submitAccept() {
+      const rid = getParam('rid');
+      const contact = getParam('contact');
+      const spinner = document.getElementById('spinner');
+      const status = document.getElementById('status');
+
+      if (!rid) {
+        status.className = 'status error';
+        status.textContent = 'Error: Missing record ID. Please use the link from your SOW email.';
+        return;
+      }
+
+      spinner.style.display = 'block';
+
+      try {
+        const url = `${ACCEPT_WEBHOOK}?rid=${encodeURIComponent(rid)}&contact=${encodeURIComponent(contact)}&action=accepted`;
+        const img = new Image();
+        img.src = url;
+
+        setTimeout(() => {
+          spinner.style.display = 'none';
+          status.className = 'status success';
+          status.textContent = '✓ Your acceptance has been recorded. Thank you for acknowledging this SOW.';
+          document.querySelector('p').textContent = 'Your response has been submitted.';
+        }, 1500);
+      } catch (err) {
+        spinner.style.display = 'none';
+        status.className = 'status error';
+        status.textContent = 'Something went wrong. Please reply to the SOW email directly to acknowledge receipt.';
+      }
+    }
+
+    submitAccept();
+  </script>
+</body>
+</html>
