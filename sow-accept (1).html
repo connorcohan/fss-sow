@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOW Acknowledgment – Federated Service Solutions</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #1a7a4a; --green-light: #e8f5ee; --green-dark: #145c37;
+      --text: #1a1a1a; --muted: #6b7280; --border: #e5e7eb; --white: #ffffff;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: #f4f6f3; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { background: var(--white); border-radius: 16px; padding: 48px 40px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 32px; }
+    .logo span { color: var(--green); }
+    .icon-wrap { width: 72px; height: 72px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
+    .icon-wrap svg { width: 36px; height: 36px; }
+    h1 { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 12px; }
+    p { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+    .status { margin-top: 24px; padding: 16px 20px; border-radius: 10px; font-size: 15px; font-weight: 500; }
+    .success { background: var(--green-light); color: var(--green-dark); border: 1px solid #a7d5ba; }
+    .error { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 24px auto 0; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+    .footer { font-size: 13px; color: var(--muted); }
+    #sending { display: block; }
+    #done { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Federated <span>Service Solutions</span></div>
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 6L9 17l-5-5"/>
+      </svg>
+    </div>
+    <h1>SOW Accepted</h1>
+    <div id="sending">
+      <p>Processing your acknowledgment…</p>
+      <p>Please do not close this page.</p>
+      <div class="spinner"></div>
+    </div>
+    <div id="done">
+      <div class="status" id="status-msg"></div>
+    </div>
+    <div class="divider"></div>
+    <p class="footer">Federated Service Solutions &bull; partners@federatedservice.com</p>
+  </div>
+
+  <script>
+    const WORKER_URL = 'https://fss-sow-acknowledge.ccohan.workers.dev';
+
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name) || '';
+    }
+
+    const rid = getParam('rid');
+    const contact = getParam('contact');
+
+    function showDone(message, isError = false) {
+      document.getElementById('sending').style.display = 'none';
+      const done = document.getElementById('done');
+      const msg = document.getElementById('status-msg');
+      done.style.display = 'block';
+      msg.textContent = message;
+      msg.classList.add(isError ? 'error' : 'success');
+    }
+
+    if (!rid) {
+      showDone('Error: Missing record ID. Please use the link from your SOW email.', true);
+    } else {
+      fetch(`${WORKER_URL}?rid=${encodeURIComponent(rid)}&contact=${encodeURIComponent(contact)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            showDone('✓ Your acceptance has been recorded. Thank you for acknowledging this SOW.');
+          } else {
+            showDone('Something went wrong recording your response. Please reply to your SOW email to confirm acknowledgment.', true);
+          }
+        })
+        .catch(() => {
+          showDone('Something went wrong recording your response. Please reply to your SOW email to confirm acknowledgment.', true);
+        });
+    }
+  </script>
+</body>
+</html>
