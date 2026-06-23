@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FSS SOW – Decline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f4f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      max-width: 520px;
+      width: 100%;
+      padding: 40px 36px 36px;
+      text-align: center;
+    }
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e94413;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    h1 { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #555; margin-bottom: 28px; line-height: 1.5; }
+    .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-accept {
+      background: #1a7a4a; color: #fff; text-decoration: none;
+      padding: 12px 26px; border-radius: 6px; font-size: 15px; font-weight: 600;
+    }
+    .btn-accept:hover { background: #155f3a; }
+    .btn-open-decline {
+      background: #e94413; color: #fff; padding: 12px 26px;
+      border-radius: 6px; font-size: 15px; font-weight: 600;
+      cursor: pointer; border: none;
+    }
+    .btn-open-decline:hover { background: #c93a10; }
+    .hint { font-size: 12px; color: #999; margin-top: 18px; line-height: 1.5; }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); z-index: 100;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+      max-width: 480px; width: 100%;
+      padding: 32px 28px 28px; text-align: left;
+      animation: pop-in 0.18s ease;
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.93); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .modal h2 { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 6px; }
+    .modal p { font-size: 13px; color: #555; margin-bottom: 16px; line-height: 1.5; }
+    textarea {
+      width: 100%; border: 1.5px solid #d1d5db; border-radius: 6px;
+      padding: 10px 12px; font-size: 14px; font-family: inherit;
+      resize: vertical; min-height: 110px; color: #111;
+    }
+    textarea:focus { outline: none; border-color: #e94413; }
+    .char-count { font-size: 11px; color: #999; text-align: right; margin-top: 4px; margin-bottom: 18px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn { padding: 10px 22px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-cancel { background: #f1f1f1; color: #444; }
+    .btn-cancel:hover:not(:disabled) { background: #e4e4e4; }
+    .btn-decline { background: #e94413; color: #fff; }
+    .btn-decline:hover:not(:disabled) { background: #c93a10; }
+    #done-msg { display: none; }
+    #done-msg .icon { font-size: 48px; margin-bottom: 12px; }
+    #done-msg h2 { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 8px; }
+    #done-msg p { font-size: 14px; color: #555; line-height: 1.6; }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.65s linear infinite;
+      vertical-align: middle; margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+<div class="card">
+  <span class="logo-text">Federated Service Solutions</span>
+
+  <div id="main-view">
+    <h1>SOW Review Required</h1>
+    <p class="subtitle">
+      Please review the Statement of Work sent to you by FSS.<br>
+      Accept to confirm your agreement, or Decline to submit your concerns.
+    </p>
+    <div class="actions">
+      <a id="accept-link" href="#" class="btn-accept">✓ Accept SOW</a>
+      <button class="btn-open-decline" onclick="openModal()">✕ Decline SOW</button>
+    </div>
+    <p class="hint">
+      Accepting constitutes a binding agreement per the terms of your MSA with FSS.<br>
+      Declining will notify the FSS team with your stated concerns.
+    </p>
+  </div>
+
+  <div id="done-msg">
+    <div class="icon">📨</div>
+    <h2 id="done-title">Decline Submitted</h2>
+    <p id="done-text">Your concerns have been sent to the FSS team. Someone will follow up with you shortly.</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2>Decline Statement of Work</h2>
+    <p>Please describe your concerns or objections. Your response will be emailed directly to the FSS project team.</p>
+    <textarea id="decline-reason" placeholder="Describe your concerns here…" maxlength="2000" oninput="document.getElementById('char-count').textContent = this.value.length"></textarea>
+    <div class="char-count"><span id="char-count">0</span> / 2000</div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="cancel-btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-decline" id="submit-btn" onclick="submitDecline()">Submit Decline</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const params  = new URLSearchParams(window.location.search);
+  const rid     = params.get('rid');
+  const contact = params.get('contact');
+  const pmEmail = params.get('pm');
+  const wo      = params.get('wo');
+
+  const acceptLink = document.getElementById('accept-link');
+  acceptLink.href = (rid && contact)
+    ? `https://connorcohan.github.io/fss-sow/sow-accept.html?rid=${encodeURIComponent(rid)}&contact=${encodeURIComponent(contact)}`
+    : 'https://connorcohan.github.io/fss-sow/sow-accept.html';
+
+  function openModal() {
+    document.getElementById('modal-overlay').classList.add('active');
+    setTimeout(() => document.getElementById('decline-reason').focus(), 50);
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('active');
+  }
+
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  async function submitDecline() {
+    const reason = document.getElementById('decline-reason').value.trim();
+    const submitBtn = document.getElementById('submit-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+
+    if (!reason) {
+      document.getElementById('decline-reason').style.borderColor = '#e94413';
+      document.getElementById('decline-reason').focus();
+      return;
+    }
+
+    if (!rid || !contact) {
+      showDone('⚠️', 'Submission Error', 'Missing record info. Please use the link from your SOW email.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    cancelBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner"></span>Submitting…';
+
+    try {
+      const res = await fetch('https://fss-sow-acknowledge.ccohan.workers.dev/decline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rid, contact, pmEmail, wo, reason })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        closeModal();
+        showDone('📨', 'Decline Submitted', 'Your concerns have been sent to the FSS team. Someone will follow up with you shortly.');
+      } else {
+        throw new Error('Worker returned failure');
+      }
+    } catch (err) {
+      submitBtn.disabled = false;
+      cancelBtn.disabled = false;
+      submitBtn.innerHTML = 'Submit Decline';
+      alert('Something went wrong. Please reply directly to your SOW email with your concerns.');
+    }
+  }
+
+  function showDone(icon, title, msg) {
+    document.getElementById('main-view').style.display = 'none';
+    document.getElementById('done-msg').style.display = 'block';
+    document.getElementById('done-msg').querySelector('.icon').textContent = icon;
+    document.getElementById('done-title').textContent = title;
+    document.getElementById('done-text').textContent = msg;
+  }
+</script>
+</body>
+</html>
