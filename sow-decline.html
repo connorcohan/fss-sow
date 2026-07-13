@@ -97,6 +97,8 @@
 <div class="card">
   <span class="logo-text">Federated Service Solutions</span>
 
+  <img id="company-logo" src="" alt="" style="max-width:180px;margin-bottom:20px;display:none;">
+
   <div id="main-view">
     <h1>SOW Review Required</h1>
     <p class="subtitle">
@@ -139,6 +141,19 @@
   const contact = params.get('contact');
   const pmEmail = params.get('pm');
   const wo      = params.get('wo');
+  const div     = params.get('div');
+
+  const logoMap = {
+    'fssGO': 'https://connorcohan.github.io/fss-sow/images/FSSGO-Logo-FIN-GrayMulti%202.png',
+    'Federated Service Solutions': 'https://connorcohan.github.io/fss-sow/images/FSS_logo_gray-01%201.png'
+  };
+
+  if (div && logoMap[div]) {
+    const logo = document.getElementById('company-logo');
+    logo.src = logoMap[div];
+    logo.alt = div;
+    logo.style.display = 'block';
+  }
 
   const acceptLink = document.getElementById('accept-link');
   acceptLink.href = (rid && contact)
