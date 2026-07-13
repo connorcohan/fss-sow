@@ -158,7 +158,7 @@
 
   const acceptLink = document.getElementById('accept-link');
   acceptLink.href = (rid && contact)
-    ? `https://connorcohan.github.io/fss-sow/sow-accept.html?rid=${encodeURIComponent(rid)}&contact=${encodeURIComponent(contact)}`
+    ? `https://connorcohan.github.io/fss-sow/sow-accept.html?rid=${encodeURIComponent(rid)}&contact=${encodeURIComponent(contact)}&div=${encodeURIComponent(div || '')}`
     : 'https://connorcohan.github.io/fss-sow/sow-accept.html';
 
   function openModal() {
