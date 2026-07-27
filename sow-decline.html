@@ -198,7 +198,7 @@
       const res = await fetch('https://fss-sow-acknowledge.ccohan.workers.dev/decline', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rid, contact, pmEmail, wo, reason })
+        body: JSON.stringify({ rid, contact, pmEmail, wo, reason, div })
       });
 
       const data = await res.json();
