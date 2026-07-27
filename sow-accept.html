@@ -15,6 +15,7 @@
     .card { background: var(--white); border-radius: 16px; padding: 48px 40px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
     .logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text); margin-bottom: 32px; }
     .logo span { color: var(--green); }
+    .company-logo { max-width: 180px; margin: 0 auto 32px; display: none; }
     .icon-wrap { width: 72px; height: 72px; border-radius: 50%; background: var(--green-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; }
     .icon-wrap svg { width: 36px; height: 36px; }
     h1 { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--text); margin-bottom: 12px; }
@@ -32,7 +33,9 @@
 </head>
 <body>
   <div class="card">
-    <div class="logo">Federated <span>Service Solutions</span></div>
+    <div id="logo-text" class="logo">Federated <span>Service Solutions</span></div>
+    <img id="company-logo" class="company-logo" src="" alt="">
+
     <div class="icon-wrap">
       <svg viewBox="0 0 24 24" fill="none" stroke="#1a7a4a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20 6L9 17l-5-5"/>
@@ -58,8 +61,22 @@
       return new URLSearchParams(window.location.search).get(name) || '';
     }
 
-    const rid = getParam('rid');
+    const rid     = getParam('rid');
     const contact = getParam('contact');
+    const div     = getParam('div');
+
+    const logoMap = {
+      'fssGO': 'https://connorcohan.github.io/fss-sow/images/FSSGO-Logo-FIN-GrayMulti%202.png',
+      'Federated Service Solutions': 'https://connorcohan.github.io/fss-sow/images/FSS_logo_gray-01%201.png'
+    };
+
+    if (div && logoMap[div]) {
+      const logo = document.getElementById('company-logo');
+      logo.src = logoMap[div];
+      logo.alt = div;
+      logo.style.display = 'block';
+      document.getElementById('logo-text').style.display = 'none';
+    }
 
     function showDone(message, isError = false) {
       document.getElementById('sending').style.display = 'none';

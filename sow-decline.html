@@ -95,7 +95,9 @@
 </head>
 <body>
 <div class="card">
-  <span class="logo-text">Federated Service Solutions</span>
+  <span id="logo-text" class="logo-text">Federated Service Solutions</span>
+
+  <img id="company-logo" src="" alt="" style="max-width:180px;margin:0 auto 20px;display:none;">
 
   <div id="main-view">
     <h1>SOW Review Required</h1>
@@ -141,9 +143,22 @@
   const wo      = params.get('wo');
   const div     = params.get('div');
 
+  const logoMap = {
+    'fssGO': 'https://connorcohan.github.io/fss-sow/images/FSSGO-Logo-FIN-GrayMulti%202.png',
+    'Federated Service Solutions': 'https://connorcohan.github.io/fss-sow/images/FSS_logo_gray-01%201.png'
+  };
+
+  if (div && logoMap[div]) {
+    const logo = document.getElementById('company-logo');
+    logo.src = logoMap[div];
+    logo.alt = div;
+    logo.style.display = 'block';
+    document.getElementById('logo-text').style.display = 'none';
+  }
+
   const acceptLink = document.getElementById('accept-link');
   acceptLink.href = (rid && contact)
-    ? `https://connorcohan.github.io/fss-sow/sow-accept.html?rid=${encodeURIComponent(rid)}&contact=${encodeURIComponent(contact)}`
+    ? `https://connorcohan.github.io/fss-sow/sow-accept.html?rid=${encodeURIComponent(rid)}&contact=${encodeURIComponent(contact)}&div=${encodeURIComponent(div || '')}`
     : 'https://connorcohan.github.io/fss-sow/sow-accept.html';
 
   function openModal() {
