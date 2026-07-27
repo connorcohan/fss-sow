@@ -139,6 +139,7 @@
   const contact = params.get('contact');
   const pmEmail = params.get('pm');
   const wo      = params.get('wo');
+  const div     = params.get('div');
 
   const acceptLink = document.getElementById('accept-link');
   acceptLink.href = (rid && contact)
@@ -182,7 +183,7 @@
       const res = await fetch('https://fss-sow-acknowledge.ccohan.workers.dev/decline', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rid, contact, pmEmail, wo, reason })
+        body: JSON.stringify({ rid, contact, pmEmail, wo, reason, div })
       });
 
       const data = await res.json();
